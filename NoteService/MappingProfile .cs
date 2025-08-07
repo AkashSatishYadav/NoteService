@@ -9,6 +9,8 @@ namespace NoteService
         public MappingProfile() 
         {
             CreateMap<UserNote, UserNoteDto>();
+
+            CreateMap<UserNoteDto, UserNote>();
         }
     }
 }

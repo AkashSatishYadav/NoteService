@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using NoteService.Services.Abstraction;
+using NoteService.Shared.DataTransferObjects;
 
 namespace NoteService.Presentation.Controllers
 {
@@ -13,10 +16,17 @@ namespace NoteService.Presentation.Controllers
             _service = service;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("{userId}", Name = "GetNotesByUserId")]
         public IActionResult GetUserNotes(string userId)
         {
             return Ok(_service.UserNoteService.GetNotesByUserId(userId, false));
+        }
+
+        [HttpPost]
+        public IActionResult CreateNote([FromBody] UserNoteDto note)
+        {
+            _service.UserNoteService.CreateNote(note);
+            return StatusCode(StatusCodes.Status201Created);
         }
     }
 }
