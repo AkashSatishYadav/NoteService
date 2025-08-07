@@ -1,6 +1,9 @@
-﻿namespace NoteService.Domain.Repositories
+﻿using NoteService.Domain.Models;
+
+namespace NoteService.Domain.Repositories
 {
     public interface IUserNoteRepository
     {
+        IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges);
     }
 }

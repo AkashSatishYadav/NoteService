@@ -1,4 +1,5 @@
-﻿using NoteService.Domain.Repositories;
+﻿using AutoMapper;
+using NoteService.Domain.Repositories;
 using NoteService.Services.Abstraction;
 using System.Runtime.CompilerServices;
 
@@ -10,9 +11,9 @@ namespace NoteService.Services
 
         private readonly Lazy<IUserNoteService> _userNoteService;
 
-        public ServiceManager(IRepositoryManager repository)
+        public ServiceManager(IRepositoryManager repository, IMapper mapper)
         {
-               _userNoteService =new Lazy<IUserNoteService>(()=> new  UserNoteService(repository));
+               _userNoteService =new Lazy<IUserNoteService>(()=> new  UserNoteService(repository, mapper));
         }
     }
 }

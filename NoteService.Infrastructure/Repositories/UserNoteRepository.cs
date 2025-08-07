@@ -8,5 +8,8 @@ namespace NoteService.Infrastructure.Repositories
         public UserNoteRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
         }
+
+        public IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges) =>
+            FindByCondition(n => n.UserID == userId, trackChanges).OrderByDescending(n => n.UpdatedAt).ToList();
     }
 }

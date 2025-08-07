@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteService.Services", "Not
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteService.Presentation", "NoteService.Presentation\NoteService.Presentation.csproj", "{D1B7F459-5BF8-4AD4-96F5-DB28A8D88371}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteService.Shared", "NoteService.Shared\NoteService.Shared.csproj", "{7557991D-D4E7-4A92-A2B9-FD7EA6CF7713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D1B7F459-5BF8-4AD4-96F5-DB28A8D88371}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1B7F459-5BF8-4AD4-96F5-DB28A8D88371}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1B7F459-5BF8-4AD4-96F5-DB28A8D88371}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7557991D-D4E7-4A92-A2B9-FD7EA6CF7713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7557991D-D4E7-4A92-A2B9-FD7EA6CF7713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7557991D-D4E7-4A92-A2B9-FD7EA6CF7713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7557991D-D4E7-4A92-A2B9-FD7EA6CF7713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
