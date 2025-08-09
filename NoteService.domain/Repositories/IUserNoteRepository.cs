@@ -6,6 +6,8 @@ namespace NoteService.Domain.Repositories
     {
         IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges);
 
+        UserNote GetNoteByNoteId(Guid nodeId, bool trackChanges);
         void CreateNote(UserNote note);
+
     }
 }

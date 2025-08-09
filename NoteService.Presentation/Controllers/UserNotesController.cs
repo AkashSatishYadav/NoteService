@@ -8,13 +8,14 @@ namespace NoteService.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    internal class UserNotesController : ControllerBase
+    public class UserNotesController : ControllerBase
     {
         private readonly IServiceManager _service;
         public UserNotesController(IServiceManager service)
         {
             _service = service;
         }
+
 
         [HttpGet("{userId}", Name = "GetNotesByUserId")]
         public IActionResult GetUserNotes(string userId)
@@ -27,6 +28,22 @@ namespace NoteService.Presentation.Controllers
         {
             _service.UserNoteService.CreateNote(note);
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpPut]
+        public IActionResult UpdateNote([FromBody] UserNoteDto note)
+        {
+            _service.UserNoteService.UpdateNote(note);
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteNote([FromBody] UserNoteForDeleteDto note)
+        {
+            _service.UserNoteService.DeleteNote(note);
+
+            return NoContent();
         }
     }
 }

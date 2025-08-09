@@ -12,7 +12,10 @@ namespace NoteService.Infrastructure.Repositories
         public void CreateNote(UserNote note) =>
             Create(note);
 
+        public UserNote GetNoteByNoteId(Guid nodeId, bool trackChanges) =>
+            FindByCondition(n => n.NoteID == nodeId, trackChanges).SingleOrDefault();
+
         public IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges) =>
-            FindByCondition(n => n.UserID == userId, trackChanges).OrderByDescending(n => n.UpdatedAt).ToList();
+            FindByCondition(n => n.UserID == userId && !n.IsDeleted, trackChanges).OrderByDescending(n => n.UpdatedAt).ToList();
     }
 }
