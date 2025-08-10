@@ -4,9 +4,9 @@ namespace NoteService.Domain.Repositories
 {
     public interface IUserNoteRepository
     {
-        IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges);
+        Task<IEnumerable<UserNote>> GetNotesByUserIdAsync(string userId, bool trackChanges);
 
-        UserNote GetNoteByNoteId(Guid nodeId, bool trackChanges);
+        Task<UserNote> GetNoteByNoteIdAsync(Guid nodeId, bool trackChanges);
         void CreateNote(UserNote note);
 
     }

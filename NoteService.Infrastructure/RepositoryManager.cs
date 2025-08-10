@@ -16,6 +16,6 @@ namespace NoteService.Infrastructure
             _userNoteRepository = new Lazy<IUserNoteRepository>(() => new UserNoteRepository(repositoryContext));
         }
 
-        public void Save() => _repositoryContext.SaveChanges();
+        public async Task SaveAsync() => await _repositoryContext.SaveChangesAsync();
     }
 }

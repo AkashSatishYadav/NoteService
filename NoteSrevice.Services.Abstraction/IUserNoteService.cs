@@ -4,12 +4,12 @@ namespace NoteService.Services.Abstraction
 {
     public interface IUserNoteService
     {
-        IEnumerable<UserNoteDto> GetNotesByUserId(string userId, bool trackChanges);
+        Task<IEnumerable<UserNoteDto>> GetNotesByUserIdAsync(string userId, bool trackChanges);
 
-        void CreateNote(UserNoteDto note);
+        Task CreateNoteAsync(UserNoteDto note);
 
-        void UpdateNote(UserNoteDto note);
+        Task UpdateNoteAsync(UserNoteDto note);
 
-        void DeleteNote(UserNoteForDeleteDto note);
+        Task DeleteNoteAsync(UserNoteForDeleteDto note);
     }
 }

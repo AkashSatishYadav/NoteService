@@ -1,4 +1,5 @@
-﻿using NoteService.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using NoteService.Domain.Models;
 using NoteService.Domain.Repositories;
 
 namespace NoteService.Infrastructure.Repositories
@@ -12,10 +13,10 @@ namespace NoteService.Infrastructure.Repositories
         public void CreateNote(UserNote note) =>
             Create(note);
 
-        public UserNote GetNoteByNoteId(Guid nodeId, bool trackChanges) =>
-            FindByCondition(n => n.NoteID == nodeId, trackChanges).SingleOrDefault();
+        public async Task<UserNote> GetNoteByNoteIdAsync(Guid nodeId, bool trackChanges) =>
+           await FindByCondition(n => n.NoteID == nodeId, trackChanges).SingleOrDefaultAsync();
 
-        public IEnumerable<UserNote> GetNotesByUserId(string userId, bool trackChanges) =>
-            FindByCondition(n => n.UserID == userId && !n.IsDeleted, trackChanges).OrderByDescending(n => n.UpdatedAt).ToList();
+        public async Task<IEnumerable<UserNote>> GetNotesByUserIdAsync(string userId, bool trackChanges) =>
+           await FindByCondition(n => n.UserID == userId && !n.IsDeleted, trackChanges).OrderByDescending(n => n.UpdatedAt).ToListAsync();
     }
 }

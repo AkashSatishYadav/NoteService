@@ -4,6 +4,6 @@
     {
         IUserNoteRepository UserNoteRepository { get; }
 
-        void Save();
+        Task SaveAsync();
     }
 }

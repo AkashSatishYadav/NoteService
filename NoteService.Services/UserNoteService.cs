@@ -16,49 +16,47 @@ namespace NoteService.Services
             _mapper = mapper;
         }
 
-        public void CreateNote(UserNoteDto note)
+        public async Task CreateNoteAsync(UserNoteDto note)
         {
             var userNote = _mapper.Map<UserNote>(note);
             var time = DateTime.UtcNow;
             userNote.CreatedAt = time;
             userNote.UpdatedAt = time;
             _repository.UserNoteRepository.CreateNote(userNote);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
 
-        public IEnumerable<UserNoteDto> GetNotesByUserId(string userId, bool trackChanges)
+        public async Task<IEnumerable<UserNoteDto>> GetNotesByUserIdAsync(string userId, bool trackChanges)
         {
-            var userNotes = _repository.UserNoteRepository.GetNotesByUserId(userId, trackChanges);
+            var userNotes = await _repository.UserNoteRepository.GetNotesByUserIdAsync(userId, trackChanges);
 
             var userNotesDto = _mapper.Map<IEnumerable<UserNoteDto>>(userNotes);
 
             return userNotesDto;
         }
 
-        public void UpdateNote(UserNoteDto note)
+        public async Task UpdateNoteAsync(UserNoteDto note)
         {
-            var userNote = _repository.UserNoteRepository.GetNoteByNoteId(note.NoteID, true);
+            var userNote = await _repository.UserNoteRepository.GetNoteByNoteIdAsync(note.NoteID, true);
             if(userNote is null)
                 return;
 
             _mapper.Map(note, userNote);
             var time = DateTime.UtcNow;
             userNote.UpdatedAt = time;
-            _repository.Save();
-
-
+            await _repository.SaveAsync();
         }
 
-        public void DeleteNote(UserNoteForDeleteDto note)
+        public async Task DeleteNoteAsync(UserNoteForDeleteDto note)
         {
-            var userNote = _repository.UserNoteRepository.GetNoteByNoteId(note.NoteID, true);
+            var userNote = await _repository.UserNoteRepository.GetNoteByNoteIdAsync(note.NoteID, true);
             if (userNote is null)
                 return;
 
             userNote.IsDeleted = true;
             var time = DateTime.UtcNow;
             userNote.UpdatedAt = time;
-            _repository.Save();
+            await _repository.SaveAsync();
         }
     }
 }

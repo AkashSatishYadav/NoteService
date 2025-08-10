@@ -7,6 +7,9 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
+builder.Services.ConfigureAuthentication();
+builder.Services.ConfigureAuthorization();
+builder.Services.ConfigureCors();
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(NoteService.Presentation.AssemblyReference).Assembly);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -21,7 +24,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowFrontend");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
