@@ -1,4 +1,6 @@
+using Hangfire;
 using NoteService;
+using NoteService.Services.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 builder.Services.ConfigureAuthentication();
 builder.Services.ConfigureAuthorization();
 builder.Services.ConfigureCors();
+builder.Services.ConfigureHangfire(builder.Configuration);
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(NoteService.Presentation.AssemblyReference).Assembly);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -27,7 +30,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseHangfireDashboard("/hangfire");
+RecurringJob.AddOrUpdate<INoteCleanupService>(
+    "cleanup-deleted-notes",
+    service => service.CleanupOldDeletedNotesAsync(),
+    Cron.Daily());
 app.MapControllers();
-
 app.Run();

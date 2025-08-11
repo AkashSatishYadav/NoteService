@@ -18,5 +18,11 @@ namespace NoteService.Infrastructure.Repositories
 
         public async Task<IEnumerable<UserNote>> GetNotesByUserIdAsync(string userId, bool trackChanges) =>
            await FindByCondition(n => n.UserID == userId && !n.IsDeleted, trackChanges).OrderByDescending(n => n.UpdatedAt).ToListAsync();
+
+        public async Task<IEnumerable<UserNote>> GetOldDeletedNotesAsync(DateTime cutoffDate) =>
+            await FindByCondition(n => n.IsDeleted && n.UpdatedAt <= cutoffDate, true).ToListAsync();
+
+        public void DeleteNote(UserNote note) =>
+            Delete(note);
     }
 }

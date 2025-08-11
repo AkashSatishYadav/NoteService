@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using NoteService.Domain.Repositories;
 using NoteService.Infrastructure;
 using NoteService.Services;
@@ -48,5 +49,13 @@ namespace NoteService
                           .AllowAnyMethod();
                 });
             });
+
+        public static void ConfigureHangfire(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHangfire(config =>
+    config.UseSqlServerStorage(configuration.GetConnectionString("hangfireConnection")));
+           services.AddHangfireServer();
+           services.AddScoped<INoteCleanupService, NoteCleanupService>();
+        }
     }
 }
