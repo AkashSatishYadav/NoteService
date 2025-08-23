@@ -1,9 +1,11 @@
 ﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NoteService.Domain.Repositories;
 using NoteService.Infrastructure;
 using NoteService.Services;
 using NoteService.Services.Abstraction;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace NoteService
 {
@@ -19,16 +21,36 @@ namespace NoteService
     services.AddDbContext<RepositoryContext>(opts =>
         opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
-        public static void ConfigureAuthentication(this IServiceCollection services) =>
-            services.AddAuthentication("Bearer")
+        public static void ConfigureAuthentication(this IServiceCollection services)
+		{
+			// Before configuring authentication:
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mappings
+
+ services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:5001"; // your IDP
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        options.MapInboundClaims = false; // ensure claims aren't remapped
+        options.Authority = "https://localhost:5001";
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false
+            ValidateAudience = true,
+            ValidAudience = "notesAPI",
+            NameClaimType = "sub" // map the Name to the 'sub' claim
         };
     });
+
+            // services.AddAuthentication("Bearer")
+    // .AddJwtBearer("Bearer", options =>
+    // {
+        // options.Authority = "https://localhost:5001"; // your IDP
+        // options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        // {
+            // ValidateAudience = true,
+            // ValidAudience = "notesAPI",
+			// NameClaimType = "sub"
+        // };
+    // });
+		}
 
         public static void ConfigureAuthorization(this IServiceCollection services) =>
             services.AddAuthorization(options =>

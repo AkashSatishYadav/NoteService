@@ -18,9 +18,14 @@ namespace NoteService.Presentation.Controllers
         }
 
 
-        [HttpGet("{userId}", Name = "GetNotesByUserId")]
-        public async Task<IActionResult> GetUserNotes(string userId)
+        [HttpGet]
+        public async Task<IActionResult> GetUserNotes()
         {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token.");
+            }
             var userNotes = await _service.UserNoteService.GetNotesByUserIdAsync(userId, false);
             return Ok(userNotes);
         }
@@ -28,6 +33,13 @@ namespace NoteService.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNote([FromBody] UserNoteDto note)
         {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            note.UserID = userId;
             await _service.UserNoteService.CreateNoteAsync(note);
             return StatusCode(StatusCodes.Status201Created);
         }
@@ -35,6 +47,13 @@ namespace NoteService.Presentation.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateNote([FromBody] UserNoteDto note)
         {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            note.UserID = userId;
             await _service.UserNoteService.UpdateNoteAsync(note);
 
             return NoContent();
@@ -43,6 +62,13 @@ namespace NoteService.Presentation.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteNote([FromBody] UserNoteForDeleteDto note)
         {
+            //var userId = User.FindFirst("sub")?.Value;
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    return Unauthorized("User ID not found in token.");
+            //}
+
+            //note.UserId = userId;
             await _service.UserNoteService.DeleteNoteAsync(note);
 
             return NoContent();

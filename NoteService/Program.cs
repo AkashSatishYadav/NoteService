@@ -8,10 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 builder.Services.ConfigureAuthentication();
 builder.Services.ConfigureAuthorization();
-builder.Services.ConfigureCors();
+//builder.Services.ConfigureCors();
 builder.Services.ConfigureHangfire(builder.Configuration);
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(NoteService.Presentation.AssemblyReference).Assembly);
@@ -19,6 +20,7 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+app.UseExceptionHandler(opt => { });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -27,7 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+//app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire");
