@@ -11,9 +11,9 @@ namespace NoteService.Services
 
         private readonly Lazy<IUserNoteService> _userNoteService;
 
-        public ServiceManager(IRepositoryManager repository, IMapper mapper)
+        public ServiceManager(IRepositoryManager repository, IMapper mapper, IMessageQueueService queueService)
         {
-               _userNoteService =new Lazy<IUserNoteService>(()=> new  UserNoteService(repository, mapper));
+               _userNoteService =new Lazy<IUserNoteService>(()=> new  UserNoteService(repository, mapper, queueService));
         }
     }
 }

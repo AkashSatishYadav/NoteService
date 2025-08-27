@@ -11,5 +11,7 @@ namespace NoteService.Services.Abstraction
         Task UpdateNoteAsync(UserNoteDto note);
 
         Task DeleteNoteAsync(UserNoteForDeleteDto note);
+
+        Task ConvertToPdf(UserNoteForConversion note);
     }
 }

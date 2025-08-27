@@ -1,5 +1,6 @@
 using Hangfire;
 using NoteService;
+using NoteService.Infrastructure.QueueService;
 using NoteService.Services.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
+builder.Services.ConfigureMessageQueue();
+await builder.Services.ConfigureRabbitMq();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 builder.Services.ConfigureAuthentication();
@@ -20,6 +23,8 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+var rabbitConnection = app.Services.GetRequiredService<IRabbitMqConnection>() as RabbitMqConnection;
+app.Lifetime.ApplicationStopping.Register(() => rabbitConnection?.Dispose());
 app.UseExceptionHandler(opt => { });
 
 // Configure the HTTP request pipeline.

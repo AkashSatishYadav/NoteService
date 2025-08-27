@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NoteService.Domain.Repositories;
 using NoteService.Infrastructure;
+using NoteService.Infrastructure.QueueService;
 using NoteService.Services;
 using NoteService.Services.Abstraction;
 using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace NoteService
 {
@@ -78,6 +80,16 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mapp
     config.UseSqlServerStorage(configuration.GetConnectionString("hangfireConnection")));
            services.AddHangfireServer();
            services.AddScoped<INoteCleanupService, NoteCleanupService>();
+        }
+
+        public static void ConfigureMessageQueue(this IServiceCollection service) =>
+            service.AddScoped<IMessageQueueService, RabbitMqService>();
+
+        public static async Task ConfigureRabbitMq(this IServiceCollection services)
+        {
+            RabbitMqConnection rabbitMqConnection = new RabbitMqConnection();
+            await rabbitMqConnection.InitializeConnection();
+            services.AddSingleton<IRabbitMqConnection>(rabbitMqConnection);
         }
     }
 }

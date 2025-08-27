@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NoteService.Services.Abstraction;
 using NoteService.Shared.DataTransferObjects;
+using NoteService.Shared.Events;
 
 namespace NoteService.Presentation.Controllers
 {
@@ -72,6 +73,20 @@ namespace NoteService.Presentation.Controllers
             await _service.UserNoteService.DeleteNoteAsync(note);
 
             return NoContent();
+        }
+
+        [HttpPost("/convert-to-pdf")]
+        public async Task<IActionResult> ConvertToPdf([FromBody] UserNoteForConversion noteForConvertion)
+        {
+            var userId = User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            noteForConvertion.UserID = userId;
+            await _service.UserNoteService.ConvertToPdf(noteForConvertion);
+            return Ok();
         }
     }
 }

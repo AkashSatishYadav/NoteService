@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NoteService.domain\NoteService.Domain.csproj" />
+    <ProjectReference Include="..\NoteSrevice.Services.Abstraction\NoteService.Services.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>
