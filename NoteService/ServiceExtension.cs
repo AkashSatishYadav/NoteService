@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NoteService.Domain.Repositories;
 using NoteService.Infrastructure;
+using NoteService.Infrastructure.Outbox;
 using NoteService.Infrastructure.QueueService;
 using NoteService.Services;
 using NoteService.Services.Abstraction;
@@ -24,35 +25,35 @@ namespace NoteService
         opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
 
         public static void ConfigureAuthentication(this IServiceCollection services)
-		{
-			// Before configuring authentication:
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mappings
-
- services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.MapInboundClaims = false; // ensure claims aren't remapped
-        options.Authority = "https://localhost:5001";
-        options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = true,
-            ValidAudience = "notesAPI",
-            NameClaimType = "sub" // map the Name to the 'sub' claim
-        };
-    });
+            // Before configuring authentication:
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mappings
+
+            services.AddAuthentication("Bearer")
+               .AddJwtBearer("Bearer", options =>
+               {
+                   options.MapInboundClaims = false; // ensure claims aren't remapped
+                   options.Authority = "https://localhost:5001";
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateAudience = true,
+                       ValidAudience = "notesAPI",
+                       NameClaimType = "sub" // map the Name to the 'sub' claim
+                   };
+               });
 
             // services.AddAuthentication("Bearer")
-    // .AddJwtBearer("Bearer", options =>
-    // {
-        // options.Authority = "https://localhost:5001"; // your IDP
-        // options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        // {
+            // .AddJwtBearer("Bearer", options =>
+            // {
+            // options.Authority = "https://localhost:5001"; // your IDP
+            // options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            // {
             // ValidateAudience = true,
             // ValidAudience = "notesAPI",
-			// NameClaimType = "sub"
-        // };
-    // });
-		}
+            // NameClaimType = "sub"
+            // };
+            // });
+        }
 
         public static void ConfigureAuthorization(this IServiceCollection services) =>
             services.AddAuthorization(options =>
@@ -78,12 +79,12 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mapp
         {
             services.AddHangfire(config =>
     config.UseSqlServerStorage(configuration.GetConnectionString("hangfireConnection")));
-           services.AddHangfireServer();
-           services.AddScoped<INoteCleanupService, NoteCleanupService>();
+            services.AddHangfireServer();
+            services.AddScoped<INoteCleanupService, NoteCleanupService>();
         }
 
         public static void ConfigureMessageQueue(this IServiceCollection service) =>
-            service.AddScoped<IMessageQueueService, RabbitMqService>();
+            service.AddSingleton<IMessageQueueService, RabbitMqService>();
 
         public static async Task ConfigureRabbitMq(this IServiceCollection services)
         {
@@ -91,5 +92,9 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // clear legacy mapp
             await rabbitMqConnection.InitializeConnection();
             services.AddSingleton<IRabbitMqConnection>(rabbitMqConnection);
         }
+
+        public static void ConfigureOutboxContext(this IServiceCollection services, IConfiguration configuration) =>
+            services.AddDbContext<OutboxContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("outboxConnection")));
     }
 }

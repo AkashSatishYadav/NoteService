@@ -1,18 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\NoteService.domain\NoteService.Domain.csproj" />
     <ProjectReference Include="..\NoteSrevice.Services.Abstraction\NoteService.Services.Abstraction.csproj" />
   </ItemGroup>
-
 </Project>

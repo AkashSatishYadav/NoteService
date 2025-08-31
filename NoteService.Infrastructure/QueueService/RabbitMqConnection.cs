@@ -5,10 +5,11 @@ namespace NoteService.Infrastructure.QueueService
 {
     public class RabbitMqConnection : IDisposable, IRabbitMqConnection
     {
-        private IConnection _connection;
-        private IChannel? _channel;
+         private IConnection? _connection;
+
+        public IConnection Connection => _connection!;
+
         private const string MainQueue = "convert-jobs";
-        public IChannel Channel => _channel!;
 
         public async Task InitializeConnection()
         {
@@ -18,8 +19,8 @@ namespace NoteService.Infrastructure.QueueService
             };
             _connection = await factory.CreateConnectionAsync();
 
-            _channel = await _connection.CreateChannelAsync();
-            await _channel.QueueDeclareAsync(queue: MainQueue, false, false, false, null);
+            using var channel = await _connection.CreateChannelAsync();
+            await channel.QueueDeclareAsync(queue: MainQueue, false, false, false, null);
         }
         public void Dispose()
         {

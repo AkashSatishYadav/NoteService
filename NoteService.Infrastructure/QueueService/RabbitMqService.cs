@@ -20,7 +20,8 @@ namespace NoteService.Infrastructure.QueueService
             {
                 DeliveryMode = DeliveryModes.Persistent // Persistent message
             };
-            await _rabbitMqConnection.Channel.BasicPublishAsync(
+            await using var channel = await _rabbitMqConnection.Connection.CreateChannelAsync();
+            await channel.BasicPublishAsync(
                 exchange: string.Empty,
                 routingKey: queueName,
                 mandatory: false,
