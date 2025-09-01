@@ -7,9 +7,12 @@ namespace NoteService.Infrastructure
     {
         public IUserNoteRepository UserNoteRepository => _userNoteRepository.Value;
 
+        public IOutboxRepository OutboxRepository => throw new NotImplementedException();
+
         private readonly RepositoryContext _repositoryContext;
         private readonly Lazy<IUserNoteRepository> _userNoteRepository;
 
+        private readonly Lazy<IOutboxRepository> _outboxRepository;
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;

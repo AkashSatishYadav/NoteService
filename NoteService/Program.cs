@@ -11,6 +11,7 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureMessageQueue();
 await builder.Services.ConfigureRabbitMq();
+builder.Services.ConfigureOutboxContext(builder.Configuration);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 builder.Services.ConfigureAuthentication();

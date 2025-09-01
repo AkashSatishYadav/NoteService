@@ -4,6 +4,8 @@
     {
         IUserNoteRepository UserNoteRepository { get; }
 
+        IOutboxRepository OutboxRepository { get; }
+
         Task SaveAsync();
     }
 }
