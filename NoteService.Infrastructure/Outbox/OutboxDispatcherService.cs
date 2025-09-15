@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NoteService.Domain.Repositories;
 using NoteService.Services.Abstraction;
 using NoteService.Shared.Events;
 
@@ -23,12 +24,9 @@ public class OutboxDispatcherService : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<OutboxContext>();
+            var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
 
-            var messages = await db.OutboxMessages
-                .Where(x => !x.IsProcessed)
-                .Take(10)
-                .ToListAsync();
+            var messages = await outboxRepository.GetUnprocessedMessagesAsync(50);
 
             foreach (var msg in messages)
             {
@@ -37,14 +35,11 @@ public class OutboxDispatcherService : BackgroundService
                     var job = JsonSerializer.Deserialize<ConversionJob>(msg.Content);
                     await _queue.PublishAsync("convert-jobs", job);
 
-                    msg.IsProcessed = true;
-                    msg.ProcessedAt = DateTime.UtcNow;
-
-                    await db.SaveChangesAsync();
+                    await outboxRepository.MarkAsProcessedAsync(msg.Id);
                 }
                 catch (Exception ex)
                 {
-                    // log error and retry in next cycle
+                    await outboxRepository.IncrementRetryOrDeadLetterAsync(msg.Id, ex);
                 }
             }
 

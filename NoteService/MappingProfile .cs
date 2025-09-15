@@ -12,10 +12,6 @@ namespace NoteService
             CreateMap<UserNote, UserNoteDto>();
 
             CreateMap<UserNoteDto, UserNote>();
-
-            CreateMap<OutboxMessageDto, OutboxMessage>();
-
-            CreateMap<OutboxMessage, OutboxMessageDto>();
         }
     }
 }

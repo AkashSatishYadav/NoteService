@@ -93,8 +93,13 @@ namespace NoteService
             services.AddSingleton<IRabbitMqConnection>(rabbitMqConnection);
         }
 
-        public static void ConfigureOutboxContext(this IServiceCollection services, IConfiguration configuration) =>
+        public static void ConfigureOutboxContext(this IServiceCollection services, IConfiguration configuration)
+        {
             services.AddDbContext<OutboxContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("outboxConnection")));
+            services.AddScoped<IOutboxRepository, OutboxRepository>();
+            services.AddHostedService<OutboxDispatcherService>();
+        }
+
     }
 }
