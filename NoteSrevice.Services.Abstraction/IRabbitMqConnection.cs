@@ -4,6 +4,6 @@ namespace NoteService.Services.Abstraction
 {
     public interface IRabbitMqConnection
     {
-       IChannel Channel { get; }
+       IConnection Connection { get; }
     }
 }

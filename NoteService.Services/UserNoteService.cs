@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using NoteService.Domain.Models;
+using NoteService.Domain.OutboxModel;
 using NoteService.Domain.Repositories;
 using NoteService.Services.Abstraction;
 using NoteService.Shared.DataTransferObjects;
@@ -11,12 +13,14 @@ namespace NoteService.Services
     {
         private readonly IRepositoryManager _repository;
         private readonly IMapper _mapper;
-        private readonly IMessageQueueService _queue;
-        public UserNoteService(IRepositoryManager repositoryManager, IMapper mapper, IMessageQueueService messageQueueService)
+
+        private readonly IOutboxRepository _outboxRepository;
+        public UserNoteService(IRepositoryManager repositoryManager, IMapper mapper,
+                               IOutboxRepository outboxRepository)
         {
             _repository = repositoryManager;
             _mapper = mapper;
-            _queue = messageQueueService;
+            _outboxRepository = outboxRepository;
         }
 
         public async Task CreateNoteAsync(UserNoteDto note)
@@ -78,7 +82,14 @@ namespace NoteService.Services
                     Content = userNote.Content
                 }
             };
-            await _queue.PublishAsync("convert-jobs", conversionJob);
+            var outboxMessage = new OutboxMessage
+    {
+        Id = Guid.NewGuid(),
+        EventType = nameof(ConversionJob),
+        Content = JsonSerializer.Serialize(conversionJob),
+        CreatedAt = DateTime.UtcNow
+    };
+            await _outboxRepository.AddAsync(outboxMessage);
 
         }
     }
